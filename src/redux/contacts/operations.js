@@ -1,67 +1,54 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
-import axios from "axios";
 
-export const instance = axios.create({
-  baseURL: 'https://connections-api.herokuapp.com',
-});
+import { instance } from "../auth/slice";
 
-export const setToken = (token) => {
-    if (!token) return (null);
-    instance.defaults.headers.common.Authorization = `Bearer ${token}`;
-  };
-
-export const clearToken = () =>
-  (instance.defaults.headers.common.Authorization = "");
-
-export const register = createAsyncThunk(
-  "auth/register",
-  async (formData, thunkApi) => {
-    try {
-      const { data } = await instance.post("/users/signup", formData);
-      setToken(data.token);
-      return data;
-    } catch (e) {
-      return thunkApi.rejectWithValue(e.message);
-    }
-  }
-);
-
-export const login = createAsyncThunk(
-  "auth/login",
-  async (formData, thunkApi) => {
-    try {
-      const { data } = await instance.post("/users/login", formData);
-      setToken(data.token);
-      return data;
-    } catch (e) {
-      return thunkApi.rejectWithValue(e.message);
-    }
-  }
-);
-
-export const refreshUser = createAsyncThunk(
-  "auth/refresh",
+export const apiFetchContacts = createAsyncThunk(
+  "contacts/fetchAll",
   async (_, thunkApi) => {
     try {
-      const state = thunkApi.getState();
-      const token = state.auth.token;
+      const { data } = await instance.get("/contacts");
 
-      setToken(token);
-      const { data } = await instance.get("/users/current");
       return data;
-    } catch (e) {
-      return thunkApi.rejectWithValue(e.message);
+    } catch (error) {
+      return thunkApi.rejectWithValue(error.message);
     }
   }
 );
 
-export const logOut = createAsyncThunk("auth/logout", async (_, thunkApi) => {
-  try {
-    await instance.post("/users/logout");
-    clearToken();
-
-    return;
-  } catch (e) {
-    return thunkApi.rejectWithValue(e.message);
+export const apiDeleteContact = createAsyncThunk(
+  "contacts/deleteContact",
+  async (contactId, thunkApi) => {
+    try {
+      const { data } = await instance.delete(`/contacts/${contactId}`);
+      return data;
+    } catch (error) {
+      return thunkApi.rejectWithValue(error.message);
+    }
   }
-});
+);
+
+export const apiAddContact = createAsyncThunk(
+  "contacts/addContact",
+  async (contact, thunkApi) => {
+    try {
+      const { data } = await instance.post("/contacts", contact);
+
+      return data;
+    } catch (error) {
+      return thunkApi.rejectWithValue(error.message);
+    }
+  }
+);
+
+export const apiEditContact = createAsyncThunk(
+  "contacts/editContact",
+  async (contact, thunkApi) => {
+    const newData = { name: contact.name, number: contact.number };
+    try {
+      const { data } = await instance.patch(`/contacts/${contact.id}`, newData);
+      return data;
+    } catch (error) {
+      return thunkApi.rejectWithValue(error.message);
+    }
+  }
+);

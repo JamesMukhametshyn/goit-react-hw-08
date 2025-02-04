@@ -1,31 +1,47 @@
 import { useDispatch } from "react-redux";
-import toast, { Toaster } from "react-hot-toast";
-import { deleteContact } from "../../redux/contacts/operations";
-
-import clsx from "clsx";
 import css from "./Contact.module.css";
+import { openModal, openPopUp } from "../../redux/contacts/slice";
 
-const Contact = ({ contact }) => {
+const Contact = ({ name, number, id }) => {
   const dispatch = useDispatch();
-
-  const onDeleteContact = (contactId) => {
-    toast.success("Contact deleted successfully!");
-    dispatch(deleteContact(contactId));
+  const popUpOpen = ({ id, name }) => {
+    const userData = { id, name };
+    const action = openPopUp(userData);
+    dispatch(action);
   };
+
+  const modalOpen = ({ id, name, number }) => {
+    const contactData = { id, name, number };
+    const action = openModal(contactData);
+    dispatch(action);
+  };
+
   return (
-    <div className={clsx(css.contactBox)}>
-      <ul className={clsx(css.contactList)}>
-        <li className={clsx(css.contactItem)}> {contact.name}</li>
-        <li className={clsx(css.contactItem)}> {contact.number}</li>
-      </ul>
+    <div className={css.contactContainer}>
+      <h1 className={css.name}>{name}</h1>
+
+      <a href={`tel:${number}`} className={css.number}>
+        📞{number}
+      </a>
+
       <button
-        className={clsx(css.contactButton)}
         type="button"
-        onClick={() => onDeleteContact(contact.id)}
+        onClick={() => {
+          popUpOpen({ id, name });
+        }}
+        className={css.deleteButton}
       >
         Delete
       </button>
-      <Toaster position="top-right" reverseOrder={false} />
+      <button
+        type="button"
+        onClick={() => {
+          modalOpen({ id, name, number });
+        }}
+        className={css.editButton}
+      >
+        Edit
+      </button>
     </div>
   );
 };

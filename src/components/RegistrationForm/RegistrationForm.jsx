@@ -1,75 +1,73 @@
 import { ErrorMessage, Field, Form, Formik } from "formik";
-import * as Yup from "yup";
 import { useDispatch } from "react-redux";
-import { register } from "../../redux/auth/operations";
-
-import clsx from "clsx";
+import * as Yup from "yup";
+import { apiRegister } from "../../redux/auth/operations";
 import css from "./RegistrationForm.module.css";
 
-const FORM_INITIAL_VALUES = { name: "", email: "", password: "" };
+const emailRegExp = /^[\w.-]+@[a-zA-Z]+\.[a-zA-Z]{2,}$/;
 
-const mailBoxSchema = Yup.object().shape({
+const minNameLength = 3;
+const maxNameLength = 50;
+const minPasswordLength = 8;
+const maxPasswordLength = 112;
+
+const registrationSchema = Yup.object({
   name: Yup.string()
-    .required("Адреса електронної пошти обов'язкова!")
-    .min(3, "Your contact name must be more than 3 characters!")
-    .max(50, `Your contact name must be less than 50 characters!`),
+    .required("Name is required")
+    .min(minNameLength, "Too short!")
+    .max(maxNameLength, "Too long!"),
   email: Yup.string()
-    .email("Enter a correct email!")
-    .required("Enter your email!"),
+    .required("Email is required!")
+    .matches(emailRegExp, "Entered email address is not valid")
+    .email("Please enter a valid email address!"),
   password: Yup.string()
-    .min(8, "The password must contain at least 8 characters!")
-    .required("Enter password!"),
+    .required("Password is required!")
+    .min(minPasswordLength, "Too short")
+    .max(maxPasswordLength, "Too long"),
 });
 
 const RegistrationForm = () => {
   const dispatch = useDispatch();
-  const handleSubmit = (values, actions) => {
-    dispatch(register(values));
+  const onRegisterAccount = (values, actions) => {
     actions.resetForm();
+
+    dispatch(apiRegister(values));
   };
 
+  const FORM_INITIAL_VALUES = {
+    name: "",
+    email: "",
+    password: "",
+  };
   return (
-    <Formik
-      initialValues={FORM_INITIAL_VALUES}
-      validationSchema={mailBoxSchema}
-      onSubmit={handleSubmit}
-    >
-      <Form className={clsx(css.boxForm)}>
-        <label className={clsx(css.labelForm)}>
-          <span className={clsx(css.labelSpan)}>Name</span>
-          <Field
-            className={clsx(css.labelInput)}
-            type="text"
-            name="name"
-            placeholder="Your name"
-          />
-          <ErrorMessage component="p" name="name" />
-        </label>
-        <label className={clsx(css.labelForm)}>
-          <span className={clsx(css.labelSpan)}>Email</span>
-          <Field
-            className={clsx(css.labelInput)}
-            type="email"
-            name="email"
-            placeholder="Your password"
-          />
-          <ErrorMessage component="p" name="email" />
-        </label>
-        <label className={clsx(css.labelForm)}>
-          <span className={clsx(css.labelSpan)}>Password</span>
-          <Field
-            className={clsx(css.labelInput)}
-            type="password"
-            name="password"
-            placeholder="Your password"
-          />
-          <ErrorMessage component="p" name="password" />
-        </label>
-        <button className={clsx(css.formButton)} type="submit">
-          Register
-        </button>
-      </Form>
-    </Formik>
+    <div>
+      <Formik
+        initialValues={FORM_INITIAL_VALUES}
+        validationSchema={registrationSchema}
+        onSubmit={onRegisterAccount}
+      >
+        <Form className={css.form}>
+          <label className={css.label}>
+            <span>Name</span>
+            <Field type="text" name="name" className={css.field} />
+            <ErrorMessage component="p" name="name" />
+          </label>
+          <label className={css.label}>
+            <span>Email</span>
+            <Field type="text" name="email" className={css.field} />
+            <ErrorMessage component="p" name="email" />
+          </label>
+          <label className={css.label}>
+            <span>Password</span>
+            <Field type="password" name="password" className={css.field} />
+            <ErrorMessage component="p" name="password" />
+          </label>
+          <button type="submit" className={css.button}>
+            Register
+          </button>
+        </Form>
+      </Formik>
+    </div>
   );
 };
 
