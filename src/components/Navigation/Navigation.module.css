@@ -1,0 +1,15 @@
+.navBox {
+    display: flex;
+    flex-direction: row;
+    gap: 20px;
+}
+
+.homeBtn {
+    color: #6b2863;
+    cursor: pointer;
+}
+
+.contactsBtn {
+    color: #6b2863;
+    cursor: pointer;
+}
