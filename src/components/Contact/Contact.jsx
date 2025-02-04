@@ -1,25 +1,13 @@
 import { useDispatch } from "react-redux";
-<<<<<<< HEAD
-=======
-import { deleteContact } from "../../redux/contactsSlice";
-
-import clsx from "clsx";
->>>>>>> parent of b782856 (add)
 import css from "./Contact.module.css";
 import { openModal, openPopUp } from "../../redux/contacts/slice";
 
 const Contact = ({ name, number, id }) => {
   const dispatch = useDispatch();
-<<<<<<< HEAD
   const popUpOpen = ({ id, name }) => {
     const userData = { id, name };
     const action = openPopUp(userData);
     dispatch(action);
-=======
-
-  const onDeleteContact = (contactId) => {
-    dispatch(deleteContact(contactId));
->>>>>>> parent of b782856 (add)
   };
 
   const modalOpen = ({ id, name, number }) => {
@@ -45,7 +33,6 @@ const Contact = ({ name, number, id }) => {
       >
         Delete
       </button>
-<<<<<<< HEAD
       <button
         type="button"
         onClick={() => {
@@ -55,8 +42,6 @@ const Contact = ({ name, number, id }) => {
       >
         Edit
       </button>
-=======
->>>>>>> parent of b782856 (add)
     </div>
   );
 };

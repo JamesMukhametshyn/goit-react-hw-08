@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 import "./App.css";
 
 import { useEffect } from "react";
@@ -79,25 +78,6 @@ function App() {
       {isError || (isAccountError && <ErrorMessage />)}
       {isLoading && <Loader />}
     </>
-=======
-import SearchBox from "./components/SearchBox/SearchBox";
-import ContactList from "./components/ContactList/ContactList";
-import ContactForm from "./components/ContactForm/ContactForm";
-
-
-import "./App.css";
-
-
-function App() {
-
-  return (
-    <div >
-      <h1>Phonebook</h1>
-      <ContactForm />
-      <SearchBox />
-      <ContactList />
-    </div>
->>>>>>> parent of b782856 (add)
   );
 }
 
