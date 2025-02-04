@@ -1,36 +1,36 @@
-.boxForm {
-    width: 400px;
-    margin: 20px auto;
-    padding: 14px;
+.form {
     display: flex;
+    flex-direction: column;
+    gap: 24px;
+    border: 1.5px solid black;
+    border-radius: 10px;
+    padding: 20px;
     align-items: center;
-    flex-direction: column;
-    gap: 20px;
-    border: 1px solid #111010;
-    border-radius: 16px;
 }
 
-.labelForm {
-    width: 100%;
+.label {
     display: flex;
     flex-direction: column;
-    gap: 6px;
+    align-items: center;
 }
 
-.labelSpan {
-    text-align: left;
+.field {
+    text-align: center;
+    width: 250px;
+    height: 25px;
+    border-radius: 20px;
 }
 
-.labelInput {
-    padding: 6px;
+.button {
+    width: 250px;
+    height: 50px;
+    border: 1px solid purple;
 }
 
-p {
-    margin: 0px;
-    color: red;
-}
+.button:hover,
+.button:focus {
+    transform: scale(1.025);
 
-.formButton {
-    width: 100px;
-    padding: 10px;
+    box-shadow: 0px 0px 6px 1px rgba(237, 235, 228, 1);
+    border-color: white;
 }

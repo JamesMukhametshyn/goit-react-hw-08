@@ -1,62 +1,63 @@
 import { ErrorMessage, Field, Form, Formik } from "formik";
-import * as Yup from "yup";
 import { useDispatch } from "react-redux";
-import { login } from "../../redux/auth/operations";
-
-import clsx from "clsx";
+import * as Yup from "yup";
+import { apiLogin } from "../../redux/auth/operations";
 import css from "./LoginForm.module.css";
 
-const FORM_INITIAL_VALUES = { email: "", password: "" };
+const emailRegExp = /^[\w.-]+@[a-zA-Z]+\.[a-zA-Z]{2,}$/;
 
-const mailBoxSchema = Yup.object().shape({
+const minPasswordLength = 8;
+const maxPasswordLength = 112;
+
+const loginSchema = Yup.object({
   email: Yup.string()
-    .email("Enter a correct email!")
-    .required("Enter your email!"),
+    .required("Email is required!")
+    .matches(emailRegExp, "Entered email address is not valid")
+    .email("Please enter a valid email address!"),
   password: Yup.string()
-    .min(8, "The password must contain at least 8 characters!")
-    .required("Enter password!"),
+    .required("Password is required!")
+    .min(minPasswordLength, "Too short")
+    .max(maxPasswordLength, "Too long"),
 });
 
 const LoginForm = () => {
   const dispatch = useDispatch();
-  const handleSubmit = (values, actions) => {
-    console.log(values);
-    dispatch(login(values));
+  const onAddContact = (values, actions) => {
     actions.resetForm();
+
+    dispatch(apiLogin(values));
+  };
+
+  const FORM_INITIAL_VALUES = {
+    email: "",
+    password: "",
   };
 
   return (
-    <Formik
-      initialValues={FORM_INITIAL_VALUES}
-      validationSchema={mailBoxSchema}
-      onSubmit={handleSubmit}
-    >
-      <Form className={clsx(css.boxForm)}>
-        <label className={clsx(css.labelForm)}>
-          <span className={clsx(css.labelSpan)}>Email</span>
-          <Field
-            className={clsx(css.labelInput)}
-            type="email"
-            name="email"
-            placeholder="Your email"
-          />
-          <ErrorMessage component="p" name="email" />
-        </label>
-        <label className={clsx(css.labelForm)}>
-          <span className={clsx(css.labelSpan)}>Password</span>
-          <Field
-            className={clsx(css.labelInput)}
-            type="password"
-            name="password"
-            placeholder="Your password"
-          />
-          <ErrorMessage component="p" name="password" />
-        </label>
-        <button className={clsx(css.formButton)} type="submit">
-          Log In
-        </button>
-      </Form>
-    </Formik>
+    <div>
+      {" "}
+      <Formik
+        initialValues={FORM_INITIAL_VALUES}
+        validationSchema={loginSchema}
+        onSubmit={onAddContact}
+      >
+        <Form className={css.form}>
+          <label className={css.label}>
+            <span>Email</span>
+            <Field type="text" name="email" className={css.field} />
+            <ErrorMessage component="p" name="email" />
+          </label>
+          <label className={css.label}>
+            <span>Password</span>
+            <Field type="password" name="password" className={css.field} />
+            <ErrorMessage component="p" name="password" />
+          </label>
+          <button type="submit" className={css.button}>
+            Login
+          </button>
+        </Form>
+      </Formik>
+    </div>
   );
 };
 

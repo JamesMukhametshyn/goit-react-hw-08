@@ -1,67 +1,59 @@
 import { ErrorMessage, Field, Form, Formik } from "formik";
-import { nanoid } from "@reduxjs/toolkit";
 import * as Yup from "yup";
-import { useDispatch } from "react-redux";
-import { addContact } from "../../redux/contactsSlice";
-
-import clsx from "clsx";
 import css from "./ContactForm.module.css";
+import { useDispatch } from "react-redux";
+import { apiAddContact } from "../../redux/contacts/operations";
 
-const FORM_INITIAL_VALUES = { name: "", number: "" };
+const phoneRegExp = /^\d{3}-\d{3}-\d{4}$/;
+const minNameLength = 3;
+const maxNameLength = 50;
 
-const mailBoxSchema = Yup.object().shape({
+const contactSchema = Yup.object({
   name: Yup.string()
-    .required("Email address is required!")
-    .min(3, "Your contact name must be more than 3 characters!")
-    .max(50, `Your contact name must be less than 50 characters!`),
+    .required("Name is required")
+    .min(minNameLength, "Too short!")
+    .max(maxNameLength, "Too long!"),
   number: Yup.string()
-    .required("Contact number is required!")
-    .min(3, "Your contact number must be more than 3 characters!")
-  
+    .required()
+    .matches(phoneRegExp, "Phone number is not valid"),
 });
 
 const ContactForm = () => {
   const dispatch = useDispatch();
-
   const onAddContact = (values, actions) => {
     const finalContact = {
       ...values,
-      id: nanoid(),
     };
-
-    dispatch(addContact(finalContact));
-
     actions.resetForm();
+    const action = apiAddContact(finalContact);
+
+    dispatch(action);
+  };
+
+  const FORM_INITIAL_VALUES = {
+    name: "",
+    number: "",
   };
 
   return (
     <Formik
       initialValues={FORM_INITIAL_VALUES}
-      validationSchema={mailBoxSchema}
+      validationSchema={contactSchema}
       onSubmit={onAddContact}
     >
-      <Form className={clsx(css.boxForm)}>
-        <label className={clsx(css.labelForm)}>
-          <span className={clsx(css.labelSpan)}>Name</span>
-          <Field
-            className={clsx(css.labelInput)}
-            type="text"
-            name="name"
-            placeholder="Your name"
-          />
+      <Form className={css.form}>
+        <label className={css.label}>
+          <span>Name</span>
+          <Field type="text" name="name" className={css.field} />
           <ErrorMessage component="p" name="name" />
         </label>
-        <label className={clsx(css.labelForm)}>
-          <span className={clsx(css.labelSpan)}>Number</span>
-          <Field
-            className={clsx(css.labelInput)}
-            type="tel"
-            name="number"
-          />
+        <label className={css.label}>
+          <span>Number</span>
+          <Field type="text" name="number" className={css.field} />
           <ErrorMessage component="p" name="number" />
         </label>
-        <button className={clsx(css.formButton)} type="submit">
-          Add contact
+        <button type="submit" className={css.button}>
+          Add Contact
         </button>
       </Form>
     </Formik>
@@ -69,17 +61,3 @@ const ContactForm = () => {
 };
 
 export default ContactForm;
-
-
-
-
-
-
-
-
-
-
-
-
-
-  
